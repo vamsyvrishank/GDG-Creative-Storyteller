@@ -235,6 +235,12 @@ storyforge/
 
 ---
 
+## Team Members List:
+
+- Vamsy Vrishank
+- Mridhul Subash
+- Manan Pandey
+
 ## Built With
 
 - [Google ADK](https://google.github.io/adk-docs/) — Agent Development Kit
