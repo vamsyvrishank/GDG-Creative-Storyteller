@@ -1,0 +1,32 @@
+# StoryForge — Python Dependencies
+# GDG Gemini Live Agent Challenge
+
+# ── Web Framework ────────────────────────────────────────────
+# Unpinned — let pip satisfy google-adk's uvicorn>=0.34.0 requirement
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+python-multipart>=0.0.9
+
+# ── Google ADK — Agent Development Kit ───────────────────────
+google-adk==0.5.0
+Deprecated>=1.2.14  # transitive dep of google-adk 0.5.0 (missing from its metadata)
+
+# ── Google AI / Gemini ────────────────────────────────────────
+# google-genai is the current SDK (replaces legacy google-generativeai)
+# Must be >=1.12.1 to satisfy google-adk 0.5.0
+google-genai>=1.12.1
+
+# ── Google Cloud ─────────────────────────────────────────────
+google-cloud-texttospeech>=2.20.0
+google-cloud-firestore>=2.19.0
+google-auth>=2.36.0
+
+# ── Vertex AI (Imagen 3 — optional) ──────────────────────────
+google-cloud-aiplatform>=1.87.0
+
+# ── HTTP Client ──────────────────────────────────────────────
+httpx>=0.28.0
+
+# ── Utilities ────────────────────────────────────────────────
+pydantic>=2.10.0
+python-dotenv>=1.0.0

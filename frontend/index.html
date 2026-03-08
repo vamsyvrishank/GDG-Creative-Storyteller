@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StoryForge — AI Storytelling Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-input: #1a1a26;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --gold-dim: rgba(201,168,76,0.15);
+      --white: #f0ede8;
+      --text-muted: #7a7a9a;
+      --border: rgba(201,168,76,0.2);
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+      --radius: 16px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Background Gradient ──────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 30% at 80% 80%, rgba(100,60,180,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Input Section ────────────────────────────────────────── */
+    .input-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    #story-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 56px 16px 20px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      min-height: 80px;
+    }
+
+    #story-input::placeholder { color: var(--text-muted); }
+    #story-input:focus { border-color: var(--gold); }
+
+    #generate-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      color: #0a0a0f;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    #generate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    #generate-btn:active { transform: translateY(0); }
+    #generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* ── Lens Buttons ─────────────────────────────────────────── */
+    .lens-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .lens-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lens-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .lens-btn.active {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── Progress Bar ─────────────────────────────────────────── */
+    .progress-wrap {
+      display: none;
+      margin-bottom: 24px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-bg {
+      background: var(--bg-card);
+      border-radius: 4px;
+      height: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    /* ── Intent Badge ─────────────────────────────────────────── */
+    .intent-badge {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding: 12px 16px;
+      background: var(--gold-dim);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      color: var(--gold-light);
+    }
+
+    /* ── Story Title ──────────────────────────────────────────── */
+    #story-title {
+      display: none;
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 40px;
+      line-height: 1.3;
+      background: linear-gradient(135deg, var(--white), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Scene Cards ──────────────────────────────────────────── */
+    #scenes-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .scene-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .scene-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scene-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 300px;
+    }
+
+    @media (max-width: 640px) {
+      .scene-inner { grid-template-columns: 1fr; }
+    }
+
+    .scene-image-wrap {
+      position: relative;
+      background: #0d0d15;
+      overflow: hidden;
+    }
+
+    .scene-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .scene-image-wrap:hover img { transform: scale(1.03); }
+
+    .image-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d15;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scene-number-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(10,10,15,0.8);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gold);
+      backdrop-filter: blur(8px);
+      z-index: 2;
+    }
+
+    .beat-badge {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(10,10,15,0.8);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      backdrop-filter: blur(8px);
+      z-index: 2;
+    }
+
+    .scene-content {
+      padding: 28px 28px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scene-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .scene-narration {
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--white);
+      flex: 1;
+      opacity: 0.9;
+    }
+
+    .scene-audio-wrap {
+      margin-top: 16px;
+    }
+
+    .audio-player {
+      width: 100%;
+      height: 32px;
+      accent-color: var(--gold);
+      filter: sepia(1) saturate(3) hue-rotate(5deg);
+    }
+
+    .audio-loading {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Share Section ────────────────────────────────────────── */
+    #share-section {
+      display: none;
+      margin-top: 48px;
+      text-align: center;
+    }
+
+    #play-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      color: #0a0a0f;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-right: 12px;
+    }
+    #play-btn:hover { opacity: 0.88; }
+
+    #share-btn {
+      background: transparent;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 12px 28px;
+      color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: 12px;
+    }
+
+    #share-btn:hover { background: var(--gold-dim); }
+
+    /* Active scene highlight during playback */
+    .scene-card.playing {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(201,168,76,0.3), var(--shadow);
+    }
+
+    #new-story-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      color: #0a0a0f;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    #new-story-btn:hover { opacity: 0.88; }
+
+    /* ── Error Message ────────────────────────────────────────── */
+    #error-msg {
+      display: none;
+      background: rgba(220,50,50,0.1);
+      border: 1px solid rgba(220,50,50,0.3);
+      border-radius: 10px;
+      padding: 16px;
+      color: #ff7070;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      margin-top: 64px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    footer a { color: var(--gold); text-decoration: none; }
+
+    /* ── Pulse animation for streaming ───────────────────────── */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .streaming-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gold);
+      font-size: 13px;
+    }
+
+    .streaming-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .streaming-dot:nth-child(2) { animation-delay: 0.2s; }
+    .streaming-dot:nth-child(3) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── Header ─────────────────────────────────────────────── -->
+    <header>
+      <div class="logo">
+        <div class="logo-icon">📖</div>
+        <span class="logo-text">StoryForge</span>
+      </div>
+      <p class="tagline">Any topic → a 5-scene cinematic story with images &amp; audio</p>
+    </header>
+
+    <!-- ── Input Section ──────────────────────────────────────── -->
+    <div class="input-section">
+      <div class="input-wrapper">
+        <textarea
+          id="story-input"
+          placeholder="Enter any topic, question, or idea… e.g. 'French Revolution', 'Why do stars die?', 'Explain photosynthesis to kids'"
+          rows="2"
+        ></textarea>
+        <button id="generate-btn">✦ Generate Story</button>
+      </div>
+      <div class="lens-row" id="lens-row">
+        <button class="lens-btn active" data-lens="auto">✦ Auto</button>
+        <button class="lens-btn" data-lens="cinematic">🎬 Cinematic</button>
+        <button class="lens-btn" data-lens="educational">📚 Educational</button>
+        <button class="lens-btn" data-lens="children">🌈 For Kids</button>
+        <button class="lens-btn" data-lens="dramatic">⚡ Dramatic</button>
+        <button class="lens-btn" data-lens="poetic">🌙 Poetic</button>
+      </div>
+    </div>
+
+    <!-- ── Error Message ───────────────────────────────────────── -->
+    <div id="error-msg"></div>
+
+    <!-- ── Progress ───────────────────────────────────────────── -->
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-status">
+          <span class="streaming-indicator">
+            <span class="streaming-dot"></span>
+            <span class="streaming-dot"></span>
+            <span class="streaming-dot"></span>
+            <span id="status-text">Analyzing your topic…</span>
+          </span>
+        </span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <!-- ── Intent Badges ──────────────────────────────────────── -->
+    <div class="intent-badge" id="intent-badge"></div>
+
+    <!-- ── Story Title ────────────────────────────────────────── -->
+    <div id="story-title"></div>
+
+    <!-- ── Scenes ─────────────────────────────────────────────── -->
+    <div id="scenes-container"></div>
+
+    <!-- ── Share Section ──────────────────────────────────────── -->
+    <div id="share-section">
+      <button id="play-btn">▶ Play Story</button>
+      <button id="share-btn">🔗 Copy Share Link</button>
+      <button id="new-story-btn">✦ New Story</button>
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────────── -->
+    <footer>
+      <p>Built for <a href="https://gdg.community.dev" target="_blank">GDG Gemini Live Agent Challenge</a> · Creative Storyteller Track</p>
+      <p style="margin-top:4px;">Powered by Gemini 2.0 Flash · Google ADK · Cloud Run</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── State ──────────────────────────────────────────────────
+    let currentLens = 'auto';
+    let currentStoryId = null;
+    let eventSource = null;
+    let sceneCount = 0;
+    let scenesReceived = 0;
+    let audioQueue = {};  // scene_number → base64 audio
+
+    // ── DOM refs ───────────────────────────────────────────────
+    const input = document.getElementById('story-input');
+    const btn = document.getElementById('generate-btn');
+    const progressWrap = document.getElementById('progress-wrap');
+    const progressBar = document.getElementById('progress-bar');
+    const progressPct = document.getElementById('progress-pct');
+    const statusText = document.getElementById('status-text');
+    const intentBadge = document.getElementById('intent-badge');
+    const storyTitle = document.getElementById('story-title');
+    const scenesContainer = document.getElementById('scenes-container');
+    const shareSection = document.getElementById('share-section');
+    const errorMsg = document.getElementById('error-msg');
+
+    // ── Lens buttons ───────────────────────────────────────────
+    document.querySelectorAll('.lens-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.lens-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLens = btn.dataset.lens;
+      });
+    });
+
+    // ── Generate button ────────────────────────────────────────
+    document.getElementById('generate-btn').addEventListener('click', startGeneration);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) startGeneration();
+    });
+
+    // ── Start generation ───────────────────────────────────────
+    function startGeneration() {
+      const topic = input.value.trim();
+      if (!topic) { input.focus(); return; }
+
+      // Reset UI
+      resetUI();
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating…';
+      progressWrap.style.display = 'block';
+      errorMsg.style.display = 'none';
+
+      // Close any existing SSE connection
+      if (eventSource) eventSource.close();
+
+      // Start SSE stream
+      fetchStoryStream(topic, currentLens);
+    }
+
+    async function fetchStoryStream(topic, lens) {
+      try {
+        const response = await fetch('/story/stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: topic, lens }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop(); // Keep incomplete line
+
+          let currentEvent = '';
+          let currentData = '';
+
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              currentEvent = line.slice(7).trim();
+            } else if (line.startsWith('data: ')) {
+              currentData = line.slice(6).trim();
+              if (currentEvent && currentData) {
+                try {
+                  const parsed = JSON.parse(currentData);
+                  handleEvent(currentEvent, parsed);
+                } catch (e) {
+                  console.warn('Failed to parse SSE data:', e);
+                }
+                currentEvent = '';
+                currentData = '';
+              }
+            }
+          }
+        }
+      } catch (err) {
+        showError('Connection error: ' + err.message);
+        resetButtons();
+      }
+    }
+
+    // ── Event Handlers ─────────────────────────────────────────
+    function handleEvent(event, data) {
+      switch (event) {
+        case 'status':
+          updateStatus(data.message, data.step, data.total);
+          break;
+        case 'intent':
+          showIntent(data);
+          break;
+        case 'narrative_ready':
+          storyTitle.textContent = data.title;
+          storyTitle.style.display = 'block';
+          sceneCount = data.scene_count;
+          updateProgress(30);
+          break;
+        case 'scene_start':
+          createSceneCard(data);
+          break;
+        case 'narration':
+          setNarration(data.scene_number, data.text);
+          break;
+        case 'image':
+          setSceneImage(data.scene_number, data.url, data.base64_data);
+          break;
+        case 'audio':
+          setSceneAudio(data.scene_number, data.base64_audio, data.mime_type);
+          scenesReceived++;
+          updateProgress(30 + (scenesReceived / (sceneCount || 5)) * 65);
+          break;
+        case 'complete':
+          currentStoryId = data.story_id;
+          onComplete(data);
+          break;
+        case 'error':
+          showError(data.message);
+          resetButtons();
+          break;
+      }
+    }
+
+    // ── UI Updates ─────────────────────────────────────────────
+    function updateStatus(msg, step, total) {
+      statusText.textContent = msg;
+      if (step && total) {
+        updateProgress((step - 1) / total * 25);
+      }
+    }
+
+    function updateProgress(pct) {
+      const clamped = Math.min(Math.max(pct, 0), 100);
+      progressBar.style.width = clamped + '%';
+      progressPct.textContent = Math.round(clamped) + '%';
+    }
+
+    function showIntent(intent) {
+      const emojiMap = {
+        cinematic: '🎬', dramatic: '⚡', whimsical: '🌈',
+        educational: '📚', poetic: '🌙',
+      };
+      const badges = [
+        { label: emojiMap[intent.tone] + ' ' + intent.tone },
+        { label: '👥 ' + intent.audience },
+        { label: '📐 ' + intent.story_structure },
+      ];
+      intentBadge.innerHTML = badges.map(b =>
+        `<span class="badge">${b.label}</span>`
+      ).join('') + `<span style="font-size:13px;color:var(--text-muted);margin-left:4px;">${intent.emotional_arc}</span>`;
+      intentBadge.style.display = 'flex';
+    }
+
+    function createSceneCard(data) {
+      const card = document.createElement('div');
+      card.className = 'scene-card';
+      card.id = `scene-${data.scene_number}`;
+      card.innerHTML = `
+        <div class="scene-inner">
+          <div class="scene-image-wrap" id="img-wrap-${data.scene_number}">
+            <div class="image-loading" id="img-loading-${data.scene_number}">
+              <div class="spinner"></div>
+            </div>
+            <span class="scene-number-badge">Scene ${data.scene_number}</span>
+            <span class="beat-badge" id="beat-${data.scene_number}">${data.emotional_beat || ''}</span>
+          </div>
+          <div class="scene-content">
+            <div class="scene-title" id="title-${data.scene_number}">${escapeHtml(data.title)}</div>
+            <div class="scene-narration" id="narration-${data.scene_number}">
+              <div class="spinner" style="width:20px;height:20px;border-width:2px;"></div>
+            </div>
+            <div class="scene-audio-wrap" id="audio-wrap-${data.scene_number}">
+              <div class="audio-loading">
+                <div class="spinner" style="width:14px;height:14px;border-width:2px;"></div>
+                <span>Generating audio…</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      scenesContainer.appendChild(card);
+
+      // Animate in after a tick
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => card.classList.add('visible'));
+      });
+
+      // Scroll to card
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
+
+    function setNarration(sceneNum, text) {
+      const el = document.getElementById(`narration-${sceneNum}`);
+      if (el) el.textContent = text;
+    }
+
+    function setSceneImage(sceneNum, url, base64Data) {
+      const wrap = document.getElementById(`img-wrap-${sceneNum}`);
+      const loading = document.getElementById(`img-loading-${sceneNum}`);
+      if (!wrap || !url) return;
+
+      const img = document.createElement('img');
+      img.alt = `Scene ${sceneNum}`;
+      img.loading = 'lazy';
+
+      // Use base64 data if available (Gemini interleaved), else URL
+      img.src = url;
+
+      img.onload = () => {
+        if (loading) loading.style.display = 'none';
+        wrap.appendChild(img);
+      };
+
+      img.onerror = () => {
+        if (loading) loading.innerHTML = '<span style="font-size:32px;opacity:0.3;">🖼️</span>';
+      };
+
+      // Eagerly append (browser starts load)
+      wrap.appendChild(img);
+    }
+
+    function setSceneAudio(sceneNum, base64Audio, mimeType) {
+      const wrap = document.getElementById(`audio-wrap-${sceneNum}`);
+      if (!wrap) return;
+
+      if (!base64Audio) {
+        wrap.innerHTML = '<span style="font-size:12px;color:var(--text-muted);">Audio unavailable</span>';
+        return;
+      }
+
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.className = 'audio-player';
+      audio.preload = 'auto';
+
+      const blob = base64ToBlob(base64Audio, mimeType || 'audio/mp3');
+      audio.src = URL.createObjectURL(blob);
+
+      wrap.innerHTML = '';
+      wrap.appendChild(audio);
+
+      // Auto-play first scene audio
+      if (sceneNum === 1) {
+        audio.play().catch(() => {}); // Graceful fail if autoplay blocked
+      }
+    }
+
+    function onComplete(data) {
+      updateProgress(100);
+      statusText.textContent = '✨ Story complete!';
+      shareSection.style.display = 'block';
+      resetButtons();
+
+      // Scroll to share
+      setTimeout(() => shareSection.scrollIntoView({ behavior: 'smooth' }), 500);
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = '⚠️ ' + msg;
+      errorMsg.style.display = 'block';
+    }
+
+    function resetButtons() {
+      btn.disabled = false;
+      btn.textContent = '✦ Generate Story';
+    }
+
+    function resetUI() {
+      stopPlay();
+      scenesContainer.innerHTML = '';
+      storyTitle.style.display = 'none';
+      storyTitle.textContent = '';
+      intentBadge.style.display = 'none';
+      intentBadge.innerHTML = '';
+      shareSection.style.display = 'none';
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPct.textContent = '0%';
+      sceneCount = 0;
+      scenesReceived = 0;
+      currentStoryId = null;
+    }
+
+    // ── Play Story — auto-advance through scenes like a video ──
+    let isPlaying = false;
+
+    document.getElementById('play-btn').addEventListener('click', () => {
+      if (isPlaying) {
+        stopPlay();
+      } else {
+        playStory();
+      }
+    });
+
+    async function playStory() {
+      const cards = document.querySelectorAll('.scene-card');
+      if (!cards.length) return;
+
+      isPlaying = true;
+      const playBtn = document.getElementById('play-btn');
+      playBtn.textContent = '⏹ Stop';
+
+      for (let i = 0; i < cards.length; i++) {
+        if (!isPlaying) break;
+
+        // Highlight active scene
+        document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('playing'));
+        cards[i].classList.add('playing');
+        cards[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Play the audio for this scene if available
+        const audio = cards[i].querySelector('audio');
+        let audioDone = false;
+        if (audio) {
+          audio.currentTime = 0;
+          try {
+            await audio.play();
+            // Wait for audio to finish
+            await new Promise(resolve => {
+              const onEnd = () => { audio.removeEventListener('ended', onEnd); resolve(); };
+              audio.addEventListener('ended', onEnd);
+              // Safety timeout: max 20s per scene
+              setTimeout(resolve, 20000);
+            });
+          } catch (e) {
+            // Autoplay blocked or no audio — wait fixed duration
+            audioDone = true;
+          }
+        }
+
+        // If no audio, show scene for 6 seconds
+        if (!audio || audioDone) {
+          await new Promise(r => setTimeout(r, 6000));
+        }
+
+        // Brief pause between scenes
+        await new Promise(r => setTimeout(r, 800));
+      }
+
+      stopPlay();
+    }
+
+    function stopPlay() {
+      isPlaying = false;
+      document.getElementById('play-btn').textContent = '▶ Play Story';
+      document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('playing'));
+      // Stop any playing audio
+      document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; });
+    }
+
+    // ── Share button ───────────────────────────────────────────
+    document.getElementById('share-btn').addEventListener('click', () => {
+      if (currentStoryId) {
+        const url = `${location.origin}/story/${currentStoryId}`;
+        navigator.clipboard.writeText(url).then(() => {
+          const shareBtn = document.getElementById('share-btn');
+          shareBtn.textContent = '✓ Copied!';
+          setTimeout(() => shareBtn.textContent = '🔗 Copy Share Link', 2000);
+        });
+      }
+    });
+
+    document.getElementById('new-story-btn').addEventListener('click', () => {
+      resetUI();
+      input.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ── Utils ──────────────────────────────────────────────────
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.appendChild(document.createTextNode(str));
+      return d.innerHTML;
+    }
+
+    function base64ToBlob(base64, mime) {
+      const bytes = atob(base64);
+      const buf = new Uint8Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) buf[i] = bytes.charCodeAt(i);
+      return new Blob([buf], { type: mime });
+    }
+
+    // ── Auto-focus on load ─────────────────────────────────────
+    input.focus();
+  </script>
+</body>
+</html>
