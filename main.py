@@ -255,7 +255,7 @@ Rules:
 
         tone = intent.get("tone", "cinematic")
 
-        for scene in narrative["scenes"]:
+        for scene_idx, scene in enumerate(narrative["scenes"]):
             scene_num = scene["scene_number"]
 
             yield sse_event("scene_start", {
@@ -271,10 +271,15 @@ Rules:
                 "scene_number": scene_num,
             })
 
-            # Generate image (async-wrapped sync call)
-            image_result = await asyncio.get_event_loop().run_in_executor(
+            # Generate image and audio concurrently to reduce latency
+            image_task = asyncio.get_event_loop().run_in_executor(
                 None, generate_image, scene["image_prompt"], tone
             )
+            audio_task = asyncio.get_event_loop().run_in_executor(
+                None, generate_audio, scene["narration"], tone
+            )
+            image_result, audio_result = await asyncio.gather(image_task, audio_task)
+
             yield sse_event("image", {
                 "url": image_result.get("url", ""),
                 "source": image_result.get("source", "unknown"),
@@ -282,10 +287,6 @@ Rules:
                 "base64_data": image_result.get("base64_data"),
             })
 
-            # Generate audio (async-wrapped sync call)
-            audio_result = await asyncio.get_event_loop().run_in_executor(
-                None, generate_audio, scene["narration"], tone
-            )
             yield sse_event("audio", {
                 "base64_audio": audio_result.get("base64_audio"),
                 "scene_number": scene_num,
@@ -436,5 +437,6 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=int(os.getenv("PORT", "8080")),
         reload=os.getenv("ENV", "production") == "development",
+        reload_excludes=["*.env", ".env", "*.json", "*.log"],
         log_level="info",
     )

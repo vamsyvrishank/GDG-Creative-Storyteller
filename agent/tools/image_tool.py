@@ -43,13 +43,13 @@ def generate_image(image_prompt: str, tone: str = "cinematic") -> dict:
     style_modifier = TONE_STYLE_MAP.get(tone, TONE_STYLE_MAP["cinematic"])
     full_prompt = f"{image_prompt}, {style_modifier}"
 
-    # Gemini interleaved output only works via AI Studio key, not Vertex AI.
-    # When GOOGLE_CLOUD_PROJECT is set we're on Vertex — skip straight to Pollinations.
-    _api_key = os.getenv("GOOGLE_API_KEY", "")
-    if USE_GEMINI_IMAGES and _api_key and not GOOGLE_CLOUD_PROJECT:
-        result = _generate_with_gemini(full_prompt, _api_key)
-        if result:
-            return result
+    # Gemini interleaved output uses the AI Studio API key directly.
+    # Works alongside Vertex AI — both can be configured at the same time.
+    # _api_key = os.getenv("GOOGLE_API_KEY", "")
+    # if USE_GEMINI_IMAGES and _api_key:
+    #     result = _generate_with_gemini(full_prompt, _api_key)
+    #     if result:
+    #         return result
 
     # Imagen 3 via Vertex AI (optional, costs money)
     if USE_IMAGEN and GOOGLE_CLOUD_PROJECT:
@@ -70,7 +70,7 @@ def _generate_with_gemini(prompt: str, api_key: str) -> Optional[dict]:
         client = genai.Client(api_key=api_key)
 
         response = client.models.generate_content(
-            model="gemini-2.0-flash-exp",
+            model="gemini-2.5-flash",
             contents=f"Generate a single high-quality image for this scene: {prompt}",
             config=types.GenerateContentConfig(
                 response_modalities=["TEXT", "IMAGE"],
@@ -107,16 +107,16 @@ def _generate_with_imagen(prompt: str) -> Optional[dict]:
             location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
         )
 
-        model = ImageGenerationModel.from_pretrained("imagen-3.0-generate-001")
+        model = ImageGenerationModel.from_pretrained("imagen-3.0-fast-generate-001")
         images = model.generate_images(
             prompt=prompt,
             number_of_images=1,
-            aspect_ratio="16:9",
+            aspect_ratio="1:1",
             safety_filter_level="block_some",
             person_generation="allow_adult",
         )
 
-        if images and len(images) > 0:
+        if images:
             img_bytes = images[0]._image_bytes
             image_b64 = base64.b64encode(img_bytes).decode("utf-8")
             return {
@@ -133,12 +133,48 @@ def _generate_with_imagen(prompt: str) -> Optional[dict]:
 
 
 def _generate_with_pollinations(prompt: str) -> dict:
-    """Pollinations.ai — free, no API key. Return URL immediately, browser loads it."""
+    """Pollinations.ai — fetch server-side and return as base64 for reliable display."""
+    import time
     encoded = urllib.parse.quote(prompt)
-    url = f"{POLLINATIONS_BASE}/{encoded}?width=1024&height=576&nologo=true&seed=42"
+    seed = int(time.time() * 1000) % 999983
+    url = f"{POLLINATIONS_BASE}/{encoded}?width=1024&height=576&nologo=true&seed={seed}"
+
+    # Retry up to 3 times: handles 429 rate limits with backoff
+    delays = [0, 8, 16]
+    for attempt, delay in enumerate(delays):
+        if delay:
+            logger.info(f"Pollinations rate limited, retrying in {delay}s (attempt {attempt+1})")
+            time.sleep(delay)
+        try:
+            with httpx.Client(timeout=25.0, follow_redirects=True) as client:
+                response = client.get(url)
+                if response.status_code == 200 and response.content:
+                    mime_type = response.headers.get("content-type", "image/jpeg").split(";")[0]
+                    if not mime_type.startswith("image/"):
+                        mime_type = "image/jpeg"
+                    image_b64 = base64.b64encode(response.content).decode("utf-8")
+                    logger.info(f"Pollinations image fetched: {len(response.content)} bytes")
+                    return {
+                        "url": f"data:{mime_type};base64,{image_b64}",
+                        "source": "pollinations",
+                        "base64_data": image_b64,
+                        "mime_type": mime_type,
+                    }
+                elif response.status_code == 429:
+                    logger.warning(f"Pollinations 429 rate limit (attempt {attempt+1})")
+                    continue  # retry with backoff
+                else:
+                    logger.warning(f"Pollinations returned {response.status_code}")
+                    break
+        except Exception as e:
+            logger.warning(f"Pollinations fetch failed: {e}")
+            break
+
+    # URL fallback — browser will attempt to load directly
+    logger.warning("All Pollinations attempts failed, using URL fallback")
     return {
         "url": url,
-        "source": "pollinations",
+        "source": "pollinations-url",
         "base64_data": None,
         "mime_type": "image/jpeg",
     }

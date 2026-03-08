@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Base ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -21,7 +20,7 @@
       --white: #f0ede8;
       --text-muted: #7a7a9a;
       --border: rgba(201,168,76,0.2);
-      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+      --shadow: 0 8px 32px rgba(0,0,0,0.6);
       --radius: 16px;
     }
 
@@ -35,946 +34,922 @@
       overflow-x: hidden;
     }
 
-    /* ── Background Gradient ──────────────────────────────────── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 30% at 80% 80%, rgba(100,60,180,0.06) 0%, transparent 50%);
+        radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 30% at 80% 80%, rgba(100,60,180,0.05) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
     }
 
-    /* ── Layout ───────────────────────────────────────────────── */
     .container {
       position: relative;
       z-index: 1;
-      max-width: 900px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 36px 24px 80px;
     }
 
-    /* ── Header ───────────────────────────────────────────────── */
-    header {
-      text-align: center;
-      margin-bottom: 48px;
-    }
+    /* ── Header ─────────────────────────────────────── */
+    header { text-align: center; margin-bottom: 40px; }
 
     .logo {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .logo-icon {
-      width: 36px;
-      height: 36px;
+      width: 34px; height: 34px;
       background: linear-gradient(135deg, var(--gold), var(--gold-light));
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
     }
 
     .logo-text {
       font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 26px; font-weight: 700;
       background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .tagline {
-      color: var(--text-muted);
-      font-size: 14px;
-      font-weight: 300;
-      letter-spacing: 0.5px;
-    }
+    .tagline { color: var(--text-muted); font-size: 13px; letter-spacing: 0.4px; }
 
-    /* ── Input Section ────────────────────────────────────────── */
+    /* ── Input ──────────────────────────────────────── */
     .input-section {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 32px;
+      padding: 20px;
+      margin-bottom: 28px;
       box-shadow: var(--shadow);
     }
 
-    .input-wrapper {
-      position: relative;
-      margin-bottom: 16px;
-    }
+    .input-wrapper { position: relative; margin-bottom: 14px; }
 
     #story-input {
       width: 100%;
       background: var(--bg-input);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 56px 16px 20px;
+      border-radius: 10px;
+      padding: 14px 120px 14px 18px;
       color: var(--white);
       font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       resize: none;
       outline: none;
       transition: border-color 0.2s;
-      min-height: 80px;
+      min-height: 60px;
     }
-
     #story-input::placeholder { color: var(--text-muted); }
     #story-input:focus { border-color: var(--gold); }
 
     #generate-btn {
       position: absolute;
-      bottom: 12px;
-      right: 12px;
+      bottom: 10px; right: 10px;
       background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
+      border: none; border-radius: 7px;
+      padding: 9px 18px;
       color: #0a0a0f;
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 13px; font-weight: 500;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
-      white-space: nowrap;
     }
-
     #generate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
     #generate-btn:active { transform: translateY(0); }
     #generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-    /* ── Lens Buttons ─────────────────────────────────────────── */
-    .lens-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .lens-row { display: flex; flex-wrap: wrap; gap: 7px; }
 
     .lens-btn {
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 6px 14px;
+      border-radius: 18px;
+      padding: 5px 13px;
       color: var(--text-muted);
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .lens-btn:hover { border-color: var(--gold); color: var(--gold); }
-    .lens-btn.active {
-      background: var(--gold-dim);
-      border-color: var(--gold);
-      color: var(--gold);
-    }
+    .lens-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
 
-    /* ── Progress Bar ─────────────────────────────────────────── */
-    .progress-wrap {
-      display: none;
-      margin-bottom: 24px;
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
-    .progress-bar-bg {
-      background: var(--bg-card);
-      border-radius: 4px;
-      height: 4px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--gold-light));
-      border-radius: 4px;
-      width: 0%;
-      transition: width 0.6s ease;
-    }
-
-    /* ── Intent Badge ─────────────────────────────────────────── */
-    .intent-badge {
-      display: none;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 24px;
-      padding: 12px 16px;
-      background: var(--gold-dim);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(201,168,76,0.1);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 12px;
-      color: var(--gold-light);
-    }
-
-    /* ── Story Title ──────────────────────────────────────────── */
-    #story-title {
-      display: none;
-      font-family: 'Playfair Display', serif;
-      font-size: 36px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 40px;
-      line-height: 1.3;
-      background: linear-gradient(135deg, var(--white), var(--gold-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ── Scene Cards ──────────────────────────────────────────── */
-    #scenes-container {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    .scene-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-
-    .scene-card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .scene-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      min-height: 300px;
-    }
-
-    @media (max-width: 640px) {
-      .scene-inner { grid-template-columns: 1fr; }
-    }
-
-    .scene-image-wrap {
-      position: relative;
-      background: #0d0d15;
-      overflow: hidden;
-    }
-
-    .scene-image-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.4s ease;
-    }
-
-    .scene-image-wrap:hover img { transform: scale(1.03); }
-
-    .image-loading {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #0d0d15;
-    }
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid var(--border);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .scene-number-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(10,10,15,0.8);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--gold);
-      backdrop-filter: blur(8px);
-      z-index: 2;
-    }
-
-    .beat-badge {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      background: rgba(10,10,15,0.8);
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-      backdrop-filter: blur(8px);
-      z-index: 2;
-    }
-
-    .scene-content {
-      padding: 28px 28px 20px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .scene-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--gold-light);
-      margin-bottom: 14px;
-      line-height: 1.3;
-    }
-
-    .scene-narration {
-      font-size: 15px;
-      line-height: 1.75;
-      color: var(--white);
-      flex: 1;
-      opacity: 0.9;
-    }
-
-    .scene-audio-wrap {
-      margin-top: 16px;
-    }
-
-    .audio-player {
-      width: 100%;
-      height: 32px;
-      accent-color: var(--gold);
-      filter: sepia(1) saturate(3) hue-rotate(5deg);
-    }
-
-    .audio-loading {
-      font-size: 12px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* ── Share Section ────────────────────────────────────────── */
-    #share-section {
-      display: none;
-      margin-top: 48px;
-      text-align: center;
-    }
-
-    #play-btn {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      border: none;
-      border-radius: 8px;
-      padding: 12px 28px;
-      color: #0a0a0f;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      margin-right: 12px;
-    }
-    #play-btn:hover { opacity: 0.88; }
-
-    #share-btn {
-      background: transparent;
-      border: 1px solid var(--gold);
-      border-radius: 8px;
-      padding: 12px 28px;
-      color: var(--gold);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-right: 12px;
-    }
-
-    #share-btn:hover { background: var(--gold-dim); }
-
-    /* Active scene highlight during playback */
-    .scene-card.playing {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 2px rgba(201,168,76,0.3), var(--shadow);
-    }
-
-    #new-story-btn {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      border: none;
-      border-radius: 8px;
-      padding: 12px 28px;
-      color: #0a0a0f;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    #new-story-btn:hover { opacity: 0.88; }
-
-    /* ── Error Message ────────────────────────────────────────── */
+    /* ── Error ──────────────────────────────────────── */
     #error-msg {
       display: none;
       background: rgba(220,50,50,0.1);
       border: 1px solid rgba(220,50,50,0.3);
       border-radius: 10px;
-      padding: 16px;
-      color: #ff7070;
-      font-size: 14px;
-      margin-bottom: 24px;
+      padding: 14px; color: #ff7070;
+      font-size: 14px; margin-bottom: 20px;
     }
 
-    /* ── Footer ───────────────────────────────────────────────── */
-    footer {
-      text-align: center;
-      margin-top: 64px;
-      color: var(--text-muted);
-      font-size: 12px;
+    /* ── Progress ───────────────────────────────────── */
+    .progress-wrap { display: none; margin-bottom: 20px; }
+
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--text-muted); margin-bottom: 6px;
     }
 
-    footer a { color: var(--gold); text-decoration: none; }
-
-    /* ── Pulse animation for streaming ───────────────────────── */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+    .progress-bar-bg {
+      background: var(--bg-card); border-radius: 4px; height: 3px; overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 4px; width: 0%;
+      transition: width 0.6s ease;
     }
 
-    .streaming-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--gold);
-      font-size: 13px;
-    }
-
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
     .streaming-dot {
-      width: 6px;
-      height: 6px;
+      display: inline-block;
+      width: 5px; height: 5px;
       background: var(--gold);
       border-radius: 50%;
       animation: pulse 1.2s ease-in-out infinite;
+      margin-right: 2px;
+    }
+    .streaming-dot:nth-child(2){animation-delay:.2s}
+    .streaming-dot:nth-child(3){animation-delay:.4s}
+
+    /* ── Intent badges ──────────────────────────────── */
+    .intent-badge {
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      background: var(--gold-dim);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2px 9px;
+      font-size: 11px;
+      color: var(--gold-light);
     }
 
-    .streaming-dot:nth-child(2) { animation-delay: 0.2s; }
-    .streaming-dot:nth-child(3) { animation-delay: 0.4s; }
+    /* ── Story Title ────────────────────────────────── */
+    #story-title {
+      display: none;
+      font-family: 'Playfair Display', serif;
+      font-size: 30px; font-weight: 700;
+      text-align: center;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--white), var(--gold-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── VIDEO PLAYER ───────────────────────────────── */
+    #video-player {
+      display: none;
+      background: #000;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      margin-bottom: 20px;
+    }
+
+    /* 16:9 image stage */
+    .player-stage {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      overflow: hidden;
+      background: #050508;
+    }
+
+    /* Shimmer placeholder */
+    .player-placeholder {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #0d0d15 25%, #1a1a2e 50%, #0d0d15 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      display: flex; align-items: center; justify-content: center;
+    }
+    @keyframes shimmer {
+      0%{background-position:200% 0} 100%{background-position:-200% 0}
+    }
+    .placeholder-icon { font-size: 52px; opacity: 0.12; }
+
+    /* Scene images — stacked, only active visible */
+    .player-stage img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .player-stage img.active { opacity: 1; }
+
+    /* Ken Burns zoom animation */
+    @keyframes kb-in  { from{transform:scale(1.0) translate(0,0)}   to{transform:scale(1.09) translate(-2%,-1%)} }
+    @keyframes kb-out { from{transform:scale(1.09) translate(2%,1%)} to{transform:scale(1.0) translate(0,0)} }
+    .player-stage img.active.kb0 { animation: kb-in  14s ease-in-out forwards; }
+    .player-stage img.active.kb1 { animation: kb-out 14s ease-in-out forwards; }
+
+    /* Gradient overlay for text legibility */
+    .scene-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 80px 24px 18px;
+      background: linear-gradient(to top, rgba(5,5,8,0.96) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .scene-pill {
+      display: inline-block;
+      background: rgba(201,168,76,0.18);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--gold-light);
+      margin-bottom: 7px;
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay-scene-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 21px; font-weight: 700;
+      color: var(--white);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.9);
+      line-height: 1.25;
+    }
+
+    /* ── Narration bar ─────────────────────────────── */
+    .narration-bar {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 16px 22px;
+      min-height: 72px;
+      display: flex; align-items: center;
+    }
+
+    #narration-text {
+      font-size: 15px; line-height: 1.75;
+      color: var(--white); opacity: 0.92;
+      transition: opacity 0.5s;
+      font-style: italic;
+    }
+
+    /* ── Controls bar ──────────────────────────────── */
+    .player-controls {
+      background: #0d0d15;
+      border-top: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 17px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+      line-height: 1;
+    }
+    .ctrl-btn:hover:not(:disabled) { color: var(--gold); background: var(--gold-dim); }
+    .ctrl-btn:disabled { opacity: 0.25; cursor: default; }
+
+    /* Scene progress dots */
+    .scene-dots { display: flex; gap: 5px; flex: 1; justify-content: center; }
+
+    .scene-dot {
+      height: 3px; border-radius: 2px;
+      background: rgba(255,255,255,0.12);
+      cursor: pointer;
+      transition: background 0.3s, width 0.3s;
+      flex: 1; max-width: 40px;
+    }
+    .scene-dot.done   { background: rgba(201,168,76,0.45); }
+    .scene-dot.active { background: var(--gold); }
+
+    /* Audio waveform */
+    .audio-indicator {
+      display: flex; align-items: center; gap: 2px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .audio-indicator.active { opacity: 1; }
+    .abar {
+      width: 3px; background: var(--gold); border-radius: 2px;
+      animation: wave 0.7s ease-in-out infinite alternate;
+    }
+    .abar:nth-child(1){height:6px;  animation-delay:0s}
+    .abar:nth-child(2){height:13px; animation-delay:.12s}
+    .abar:nth-child(3){height:9px;  animation-delay:.25s}
+    .abar:nth-child(4){height:15px; animation-delay:.08s}
+    .abar:nth-child(5){height:7px;  animation-delay:.18s}
+    @keyframes wave { from{transform:scaleY(.35)} to{transform:scaleY(1)} }
+
+    .scene-counter { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+    /* ── Share ──────────────────────────────────────── */
+    #share-section {
+      display: none;
+      margin-top: 18px;
+      text-align: center;
+    }
+    #share-btn {
+      background: transparent;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 10px 22px;
+      color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-right: 10px;
+    }
+    #share-btn:hover { background: var(--gold-dim); }
+
+    #new-story-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none; border-radius: 8px;
+      padding: 10px 22px;
+      color: #0a0a0f;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    #new-story-btn:hover { opacity: 0.88; }
+
+    footer {
+      text-align: center;
+      margin-top: 56px;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
   </style>
 </head>
 <body>
-  <div class="container">
+<div class="container">
 
-    <!-- ── Header ─────────────────────────────────────────────── -->
-    <header>
-      <div class="logo">
-        <div class="logo-icon">📖</div>
-        <span class="logo-text">StoryForge</span>
-      </div>
-      <p class="tagline">Any topic → a 5-scene cinematic story with images &amp; audio</p>
-    </header>
-
-    <!-- ── Input Section ──────────────────────────────────────── -->
-    <div class="input-section">
-      <div class="input-wrapper">
-        <textarea
-          id="story-input"
-          placeholder="Enter any topic, question, or idea… e.g. 'French Revolution', 'Why do stars die?', 'Explain photosynthesis to kids'"
-          rows="2"
-        ></textarea>
-        <button id="generate-btn">✦ Generate Story</button>
-      </div>
-      <div class="lens-row" id="lens-row">
-        <button class="lens-btn active" data-lens="auto">✦ Auto</button>
-        <button class="lens-btn" data-lens="cinematic">🎬 Cinematic</button>
-        <button class="lens-btn" data-lens="educational">📚 Educational</button>
-        <button class="lens-btn" data-lens="children">🌈 For Kids</button>
-        <button class="lens-btn" data-lens="dramatic">⚡ Dramatic</button>
-        <button class="lens-btn" data-lens="poetic">🌙 Poetic</button>
-      </div>
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📖</div>
+      <span class="logo-text">StoryForge</span>
     </div>
+    <p class="tagline">Any topic → a cinematic AI story with images &amp; narrated audio</p>
+  </header>
 
-    <!-- ── Error Message ───────────────────────────────────────── -->
-    <div id="error-msg"></div>
-
-    <!-- ── Progress ───────────────────────────────────────────── -->
-    <div class="progress-wrap" id="progress-wrap">
-      <div class="progress-label">
-        <span id="progress-status">
-          <span class="streaming-indicator">
-            <span class="streaming-dot"></span>
-            <span class="streaming-dot"></span>
-            <span class="streaming-dot"></span>
-            <span id="status-text">Analyzing your topic…</span>
-          </span>
-        </span>
-        <span id="progress-pct">0%</span>
-      </div>
-      <div class="progress-bar-bg">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
+  <div class="input-section">
+    <div class="input-wrapper">
+      <textarea id="story-input"
+        placeholder="Enter any topic… 'French Revolution', 'Why do stars die?', 'Photosynthesis for kids'"
+        rows="2"></textarea>
+      <button id="generate-btn">✦ Generate</button>
     </div>
-
-    <!-- ── Intent Badges ──────────────────────────────────────── -->
-    <div class="intent-badge" id="intent-badge"></div>
-
-    <!-- ── Story Title ────────────────────────────────────────── -->
-    <div id="story-title"></div>
-
-    <!-- ── Scenes ─────────────────────────────────────────────── -->
-    <div id="scenes-container"></div>
-
-    <!-- ── Share Section ──────────────────────────────────────── -->
-    <div id="share-section">
-      <button id="play-btn">▶ Play Story</button>
-      <button id="share-btn">🔗 Copy Share Link</button>
-      <button id="new-story-btn">✦ New Story</button>
+    <div class="lens-row">
+      <button class="lens-btn active" data-lens="auto">✦ Auto</button>
+      <button class="lens-btn" data-lens="cinematic">🎬 Cinematic</button>
+      <button class="lens-btn" data-lens="educational">📚 Educational</button>
+      <button class="lens-btn" data-lens="children">🌈 For Kids</button>
+      <button class="lens-btn" data-lens="dramatic">⚡ Dramatic</button>
+      <button class="lens-btn" data-lens="poetic">🌙 Poetic</button>
     </div>
-
-    <!-- ── Footer ─────────────────────────────────────────────── -->
-    <footer>
-      <p>Built for <a href="https://gdg.community.dev" target="_blank">GDG Gemini Live Agent Challenge</a> · Creative Storyteller Track</p>
-      <p style="margin-top:4px;">Powered by Gemini 2.0 Flash · Google ADK · Cloud Run</p>
-    </footer>
-
   </div>
 
-  <script>
-    // ── State ──────────────────────────────────────────────────
-    let currentLens = 'auto';
-    let currentStoryId = null;
-    let eventSource = null;
-    let sceneCount = 0;
-    let scenesReceived = 0;
-    let audioQueue = {};  // scene_number → base64 audio
+  <div id="error-msg"></div>
 
-    // ── DOM refs ───────────────────────────────────────────────
-    const input = document.getElementById('story-input');
-    const btn = document.getElementById('generate-btn');
-    const progressWrap = document.getElementById('progress-wrap');
-    const progressBar = document.getElementById('progress-bar');
-    const progressPct = document.getElementById('progress-pct');
-    const statusText = document.getElementById('status-text');
-    const intentBadge = document.getElementById('intent-badge');
-    const storyTitle = document.getElementById('story-title');
-    const scenesContainer = document.getElementById('scenes-container');
-    const shareSection = document.getElementById('share-section');
-    const errorMsg = document.getElementById('error-msg');
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-label">
+      <span>
+        <span class="streaming-dot"></span>
+        <span class="streaming-dot"></span>
+        <span class="streaming-dot"></span>
+        <span id="status-text">Analyzing your topic…</span>
+      </span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
 
-    // ── Lens buttons ───────────────────────────────────────────
-    document.querySelectorAll('.lens-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.lens-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentLens = btn.dataset.lens;
-      });
+  <div class="intent-badge" id="intent-badge"></div>
+  <div id="story-title"></div>
+
+  <!-- ══ VIDEO PLAYER ══════════════════════════════════ -->
+  <div id="video-player">
+
+    <div class="player-stage" id="player-stage">
+      <!-- shimmer while loading -->
+      <div class="player-placeholder" id="player-placeholder">
+        <span class="placeholder-icon">🎬</span>
+      </div>
+      <!-- scene images injected by JS -->
+
+      <div class="scene-overlay">
+        <div class="scene-pill" id="scene-pill">Scene 1</div>
+        <div class="overlay-scene-title" id="overlay-title">&nbsp;</div>
+      </div>
+    </div>
+
+    <div class="narration-bar">
+      <div id="narration-text">Building your story…</div>
+    </div>
+
+    <div class="player-controls">
+      <button class="ctrl-btn" id="ctrl-prev" disabled title="Previous">⏮</button>
+      <button class="ctrl-btn" id="ctrl-play" disabled title="Play">▶</button>
+      <button class="ctrl-btn" id="ctrl-next" disabled title="Next">⏭</button>
+
+      <div class="scene-dots" id="scene-dots"></div>
+
+      <div class="audio-indicator" id="audio-indicator">
+        <div class="abar"></div><div class="abar"></div><div class="abar"></div>
+        <div class="abar"></div><div class="abar"></div>
+      </div>
+
+      <div class="scene-counter" id="scene-counter">— / —</div>
+    </div>
+
+    <audio id="scene-audio" style="display:none"></audio>
+  </div>
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div id="share-section">
+    <button id="share-btn">🔗 Copy Share Link</button>
+    <button id="new-story-btn">✦ New Story</button>
+  </div>
+
+  <footer>
+    <p>Built for <a href="https://gdg.community.dev" target="_blank">GDG Gemini Live Agent Challenge</a> · Creative Storyteller Track</p>
+    <p style="margin-top:4px;">Powered by Gemini 2.0 Flash · Google ADK · Cloud Run</p>
+  </footer>
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────
+let currentLens = 'auto';
+let currentStoryId = null;
+let scenes = [];       // {title, narration, beat, imageUrl, audioB64, imgEl}
+let currentIdx = -1;
+let isPlaying = false;
+let generationDone = false;
+let kbToggle = 0;
+
+// ── DOM ───────────────────────────────────────────────────
+const inputEl       = document.getElementById('story-input');
+const generateBtn   = document.getElementById('generate-btn');
+const progressWrap  = document.getElementById('progress-wrap');
+const progressBar   = document.getElementById('progress-bar');
+const progressPct   = document.getElementById('progress-pct');
+const statusText    = document.getElementById('status-text');
+const intentBadge   = document.getElementById('intent-badge');
+const storyTitleEl  = document.getElementById('story-title');
+const videoPlayer   = document.getElementById('video-player');
+const playerStage   = document.getElementById('player-stage');
+const placeholder   = document.getElementById('player-placeholder');
+const scenePill     = document.getElementById('scene-pill');
+const overlayTitle  = document.getElementById('overlay-title');
+const narrationEl   = document.getElementById('narration-text');
+const sceneDotsEl   = document.getElementById('scene-dots');
+const sceneCounter  = document.getElementById('scene-counter');
+const audioInd      = document.getElementById('audio-indicator');
+const ctrlPlay      = document.getElementById('ctrl-play');
+const ctrlPrev      = document.getElementById('ctrl-prev');
+const ctrlNext      = document.getElementById('ctrl-next');
+const shareSection  = document.getElementById('share-section');
+const errorMsg      = document.getElementById('error-msg');
+const audioEl       = document.getElementById('scene-audio');
+
+// ── Lens ──────────────────────────────────────────────────
+document.querySelectorAll('.lens-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.lens-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentLens = b.dataset.lens;
+  });
+});
+
+// ── Generate ──────────────────────────────────────────────
+generateBtn.addEventListener('click', startGeneration);
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) startGeneration();
+});
+
+function startGeneration() {
+  const topic = inputEl.value.trim();
+  if (!topic) { inputEl.focus(); return; }
+  resetAll();
+  generateBtn.disabled = true;
+  generateBtn.textContent = '⏳ Generating…';
+  progressWrap.style.display = 'block';
+  videoPlayer.style.display = 'block';
+  streamStory(topic, currentLens);
+}
+
+async function streamStory(topic, lens) {
+  try {
+    const res = await fetch('/story/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: topic, lens }),
     });
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
 
-    // ── Generate button ────────────────────────────────────────
-    document.getElementById('generate-btn').addEventListener('click', startGeneration);
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) startGeneration();
-    });
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
 
-    // ── Start generation ───────────────────────────────────────
-    function startGeneration() {
-      const topic = input.value.trim();
-      if (!topic) { input.focus(); return; }
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
 
-      // Reset UI
-      resetUI();
-      btn.disabled = true;
-      btn.textContent = '⏳ Generating…';
-      progressWrap.style.display = 'block';
-      errorMsg.style.display = 'none';
-
-      // Close any existing SSE connection
-      if (eventSource) eventSource.close();
-
-      // Start SSE stream
-      fetchStoryStream(topic, currentLens);
-    }
-
-    async function fetchStoryStream(topic, lens) {
-      try {
-        const response = await fetch('/story/stream', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input: topic, lens }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop(); // Keep incomplete line
-
-          let currentEvent = '';
-          let currentData = '';
-
-          for (const line of lines) {
-            if (line.startsWith('event: ')) {
-              currentEvent = line.slice(7).trim();
-            } else if (line.startsWith('data: ')) {
-              currentData = line.slice(6).trim();
-              if (currentEvent && currentData) {
-                try {
-                  const parsed = JSON.parse(currentData);
-                  handleEvent(currentEvent, parsed);
-                } catch (e) {
-                  console.warn('Failed to parse SSE data:', e);
-                }
-                currentEvent = '';
-                currentData = '';
-              }
-            }
+      let ev = '', da = '';
+      for (const line of lines) {
+        if (line.startsWith('event: ')) { ev = line.slice(7).trim(); da = ''; }
+        else if (line.startsWith('data: ')) {
+          da = line.slice(6).trim();
+          if (ev && da) {
+            try { onEvent(ev, JSON.parse(da)); } catch(_) {}
+            ev = ''; da = '';
           }
         }
-      } catch (err) {
-        showError('Connection error: ' + err.message);
-        resetButtons();
       }
     }
+  } catch (err) {
+    showError('Connection error: ' + err.message);
+    resetBtns();
+  }
+}
 
-    // ── Event Handlers ─────────────────────────────────────────
-    function handleEvent(event, data) {
-      switch (event) {
-        case 'status':
-          updateStatus(data.message, data.step, data.total);
-          break;
-        case 'intent':
-          showIntent(data);
-          break;
-        case 'narrative_ready':
-          storyTitle.textContent = data.title;
-          storyTitle.style.display = 'block';
-          sceneCount = data.scene_count;
-          updateProgress(30);
-          break;
-        case 'scene_start':
-          createSceneCard(data);
-          break;
-        case 'narration':
-          setNarration(data.scene_number, data.text);
-          break;
-        case 'image':
-          setSceneImage(data.scene_number, data.url, data.base64_data);
-          break;
-        case 'audio':
-          setSceneAudio(data.scene_number, data.base64_audio, data.mime_type);
-          scenesReceived++;
-          updateProgress(30 + (scenesReceived / (sceneCount || 5)) * 65);
-          break;
-        case 'complete':
-          currentStoryId = data.story_id;
-          onComplete(data);
-          break;
-        case 'error':
-          showError(data.message);
-          resetButtons();
-          break;
+// ── Event dispatcher ──────────────────────────────────────
+function onEvent(type, data) {
+  switch (type) {
+    case 'status':
+      statusText.textContent = data.message;
+      if (data.step) setProgress((data.step - 1) / data.total * 18);
+      break;
+
+    case 'intent':
+      renderIntent(data);
+      break;
+
+    case 'narrative_ready':
+      storyTitleEl.textContent = data.title;
+      storyTitleEl.style.display = 'block';
+      for (let i = 0; i < data.scene_count; i++) {
+        scenes.push({ title:'', narration:'', beat:'', imageUrl:'', audioB64: null, imgEl: null });
+        makeDot(i);
       }
-    }
+      setProgress(22);
+      break;
 
-    // ── UI Updates ─────────────────────────────────────────────
-    function updateStatus(msg, step, total) {
-      statusText.textContent = msg;
-      if (step && total) {
-        updateProgress((step - 1) / total * 25);
+    case 'scene_start': {
+      const i = data.scene_number - 1;
+      if (scenes[i]) { scenes[i].title = data.title; scenes[i].beat = data.emotional_beat || ''; }
+      if (data.scene_number === 1 && currentIdx === -1) {
+        currentIdx = 0;
+        showSceneInfo(0);
       }
+      setProgress(22 + (data.scene_number / (scenes.length || 5)) * 15);
+      break;
     }
 
-    function updateProgress(pct) {
-      const clamped = Math.min(Math.max(pct, 0), 100);
-      progressBar.style.width = clamped + '%';
-      progressPct.textContent = Math.round(clamped) + '%';
+    case 'narration': {
+      const i = data.scene_number - 1;
+      if (scenes[i]) scenes[i].narration = data.text;
+      if (i === currentIdx) narrationEl.textContent = data.text;
+      break;
     }
 
-    function showIntent(intent) {
-      const emojiMap = {
-        cinematic: '🎬', dramatic: '⚡', whimsical: '🌈',
-        educational: '📚', poetic: '🌙',
-      };
-      const badges = [
-        { label: emojiMap[intent.tone] + ' ' + intent.tone },
-        { label: '👥 ' + intent.audience },
-        { label: '📐 ' + intent.story_structure },
-      ];
-      intentBadge.innerHTML = badges.map(b =>
-        `<span class="badge">${b.label}</span>`
-      ).join('') + `<span style="font-size:13px;color:var(--text-muted);margin-left:4px;">${intent.emotional_arc}</span>`;
-      intentBadge.style.display = 'flex';
+    case 'image': {
+      const i = data.scene_number - 1;
+      if (!scenes[i]) break;
+      const url = data.url || '';
+      scenes[i].imageUrl = url;
+      // Preload image — use proxy URL for Pollinations to avoid CORS/slow-start
+      loadImage(i, url);
+      setProgress(22 + (data.scene_number / (scenes.length || 5)) * 50);
+      break;
     }
 
-    function createSceneCard(data) {
-      const card = document.createElement('div');
-      card.className = 'scene-card';
-      card.id = `scene-${data.scene_number}`;
-      card.innerHTML = `
-        <div class="scene-inner">
-          <div class="scene-image-wrap" id="img-wrap-${data.scene_number}">
-            <div class="image-loading" id="img-loading-${data.scene_number}">
-              <div class="spinner"></div>
-            </div>
-            <span class="scene-number-badge">Scene ${data.scene_number}</span>
-            <span class="beat-badge" id="beat-${data.scene_number}">${data.emotional_beat || ''}</span>
-          </div>
-          <div class="scene-content">
-            <div class="scene-title" id="title-${data.scene_number}">${escapeHtml(data.title)}</div>
-            <div class="scene-narration" id="narration-${data.scene_number}">
-              <div class="spinner" style="width:20px;height:20px;border-width:2px;"></div>
-            </div>
-            <div class="scene-audio-wrap" id="audio-wrap-${data.scene_number}">
-              <div class="audio-loading">
-                <div class="spinner" style="width:14px;height:14px;border-width:2px;"></div>
-                <span>Generating audio…</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      scenesContainer.appendChild(card);
-
-      // Animate in after a tick
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => card.classList.add('visible'));
-      });
-
-      // Scroll to card
-      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    case 'audio': {
+      const i = data.scene_number - 1;
+      if (scenes[i]) scenes[i].audioB64 = data.base64_audio || null;
+      setProgress(22 + (data.scene_number / (scenes.length || 5)) * 72);
+      break;
     }
 
-    function setNarration(sceneNum, text) {
-      const el = document.getElementById(`narration-${sceneNum}`);
-      if (el) el.textContent = text;
+    case 'complete':
+      currentStoryId = data.story_id;
+      onComplete();
+      break;
+
+    case 'error':
+      showError(data.message);
+      resetBtns();
+      break;
+  }
+}
+
+// ── Image loading ─────────────────────────────────────────
+function loadImage(idx, url) {
+  if (!url) return;
+  const img = document.createElement('img');
+  img.alt = `Scene ${idx + 1}`;
+  // Append to stage immediately so browser starts loading
+  playerStage.appendChild(img);
+  scenes[idx].imgEl = img;
+
+  img.onload = () => {
+    // If this is the current scene, activate it
+    if (idx === currentIdx) activateScene(idx);
+  };
+  img.onerror = () => {
+    // Try once more with cache-busting
+    if (!img.dataset.retried) {
+      img.dataset.retried = '1';
+      img.src = url + '&r=' + Date.now();
     }
+  };
+  img.src = url;
+}
 
-    function setSceneImage(sceneNum, url, base64Data) {
-      const wrap = document.getElementById(`img-wrap-${sceneNum}`);
-      const loading = document.getElementById(`img-loading-${sceneNum}`);
-      if (!wrap || !url) return;
-
-      const img = document.createElement('img');
-      img.alt = `Scene ${sceneNum}`;
-      img.loading = 'lazy';
-
-      // Use base64 data if available (Gemini interleaved), else URL
-      img.src = url;
-
-      img.onload = () => {
-        if (loading) loading.style.display = 'none';
-        wrap.appendChild(img);
-      };
-
-      img.onerror = () => {
-        if (loading) loading.innerHTML = '<span style="font-size:32px;opacity:0.3;">🖼️</span>';
-      };
-
-      // Eagerly append (browser starts load)
-      wrap.appendChild(img);
+// ── Activate a scene visually ─────────────────────────────
+function activateScene(idx) {
+  // Fade out all images
+  playerStage.querySelectorAll('img').forEach(el => {
+    el.classList.remove('active', 'kb0', 'kb1');
+  });
+  const s = scenes[idx];
+  if (s && s.imgEl && s.imgEl.complete && s.imgEl.naturalWidth > 0) {
+    kbToggle ^= 1;
+    s.imgEl.classList.add('active', kbToggle ? 'kb1' : 'kb0');
+    placeholder.style.display = 'none';
+  } else {
+    placeholder.style.display = 'flex';
+    // If image is still loading, activate when it loads
+    if (s && s.imgEl) {
+      const orig = s.imgEl.onload;
+      s.imgEl.onload = () => { if(orig) orig(); if(currentIdx===idx) activateScene(idx); };
     }
+  }
+}
 
-    function setSceneAudio(sceneNum, base64Audio, mimeType) {
-      const wrap = document.getElementById(`audio-wrap-${sceneNum}`);
-      if (!wrap) return;
+// ── Update scene text overlay ─────────────────────────────
+function showSceneInfo(idx) {
+  const s = scenes[idx];
+  if (!s) return;
+  scenePill.textContent = `Scene ${idx + 1} of ${scenes.length}  ·  ${s.beat || ''}`;
+  overlayTitle.textContent = s.title || '';
+  narrationEl.style.opacity = '0';
+  setTimeout(() => {
+    narrationEl.textContent = s.narration || (idx === currentIdx ? 'Loading…' : '');
+    narrationEl.style.opacity = '1';
+  }, 300);
+  sceneCounter.textContent = `${idx + 1} / ${scenes.length}`;
+  updateDots(idx);
+  ctrlPrev.disabled = idx === 0;
+  ctrlNext.disabled = (idx >= scenes.length - 1);
+}
 
-      if (!base64Audio) {
-        wrap.innerHTML = '<span style="font-size:12px;color:var(--text-muted);">Audio unavailable</span>';
-        return;
-      }
+// ── Go to scene ───────────────────────────────────────────
+function goTo(idx) {
+  if (idx < 0 || idx >= scenes.length) return;
+  stopAudio();
+  currentIdx = idx;
+  activateScene(idx);
+  showSceneInfo(idx);
+  if (isPlaying) startSceneAudio(idx);
+}
 
-      const audio = document.createElement('audio');
-      audio.controls = true;
-      audio.className = 'audio-player';
-      audio.preload = 'auto';
+// ── Audio playback ────────────────────────────────────────
+const synth = window.speechSynthesis;
+let synthUtter = null;
 
-      const blob = base64ToBlob(base64Audio, mimeType || 'audio/mp3');
-      audio.src = URL.createObjectURL(blob);
-
-      wrap.innerHTML = '';
-      wrap.appendChild(audio);
-
-      // Auto-play first scene audio
-      if (sceneNum === 1) {
-        audio.play().catch(() => {}); // Graceful fail if autoplay blocked
-      }
-    }
-
-    function onComplete(data) {
-      updateProgress(100);
-      statusText.textContent = '✨ Story complete!';
-      shareSection.style.display = 'block';
-      resetButtons();
-
-      // Scroll to share
-      setTimeout(() => shareSection.scrollIntoView({ behavior: 'smooth' }), 500);
-    }
-
-    function showError(msg) {
-      errorMsg.textContent = '⚠️ ' + msg;
-      errorMsg.style.display = 'block';
-    }
-
-    function resetButtons() {
-      btn.disabled = false;
-      btn.textContent = '✦ Generate Story';
-    }
-
-    function resetUI() {
-      stopPlay();
-      scenesContainer.innerHTML = '';
-      storyTitle.style.display = 'none';
-      storyTitle.textContent = '';
-      intentBadge.style.display = 'none';
-      intentBadge.innerHTML = '';
-      shareSection.style.display = 'none';
-      progressWrap.style.display = 'none';
-      progressBar.style.width = '0%';
-      progressPct.textContent = '0%';
-      sceneCount = 0;
-      scenesReceived = 0;
-      currentStoryId = null;
-    }
-
-    // ── Play Story — auto-advance through scenes like a video ──
-    let isPlaying = false;
-
-    document.getElementById('play-btn').addEventListener('click', () => {
-      if (isPlaying) {
-        stopPlay();
-      } else {
-        playStory();
-      }
+function startSceneAudio(idx) {
+  const b64 = scenes[idx]?.audioB64;
+  if (b64) {
+    // Google Cloud TTS (high quality)
+    const blob = b64ToBlob(b64, 'audio/mp3');
+    const blobUrl = URL.createObjectURL(blob);
+    audioEl.src = blobUrl;
+    audioEl.play().then(() => {
+      audioInd.classList.add('active');
+    }).catch(() => {
+      audioInd.classList.remove('active');
+      useBrowserTTS(idx);
     });
+  } else {
+    // Browser Web Speech API fallback
+    useBrowserTTS(idx);
+  }
+}
 
-    async function playStory() {
-      const cards = document.querySelectorAll('.scene-card');
-      if (!cards.length) return;
+function useBrowserTTS(idx) {
+  const text = scenes[idx]?.narration;
+  if (!text || !synth) {
+    audioInd.classList.remove('active');
+    audioEl._timer = setTimeout(() => { if (isPlaying) advance(); }, 7000);
+    return;
+  }
+  synth.cancel();
+  synthUtter = new SpeechSynthesisUtterance(text);
+  synthUtter.rate = 0.9;
+  synthUtter.pitch = 1.0;
+  // Pick the best available English voice
+  const voices = synth.getVoices();
+  const preferred = voices.find(v => v.lang === 'en-US' && v.name.includes('Google'))
+    || voices.find(v => v.lang === 'en-US' && !v.localService)
+    || voices.find(v => v.lang.startsWith('en'));
+  if (preferred) synthUtter.voice = preferred;
+  synthUtter.onstart = () => audioInd.classList.add('active');
+  synthUtter.onend = () => {
+    audioInd.classList.remove('active');
+    if (isPlaying) setTimeout(() => { if (isPlaying) advance(); }, 700);
+  };
+  synthUtter.onerror = () => {
+    audioInd.classList.remove('active');
+    audioEl._timer = setTimeout(() => { if (isPlaying) advance(); }, 7000);
+  };
+  synth.speak(synthUtter);
+}
 
-      isPlaying = true;
-      const playBtn = document.getElementById('play-btn');
-      playBtn.textContent = '⏹ Stop';
+function stopAudio() {
+  clearTimeout(audioEl._timer);
+  audioEl.pause();
+  audioEl.src = '';
+  if (synth) synth.cancel();
+  synthUtter = null;
+  audioInd.classList.remove('active');
+}
 
-      for (let i = 0; i < cards.length; i++) {
-        if (!isPlaying) break;
+audioEl.addEventListener('ended', () => {
+  audioInd.classList.remove('active');
+  if (isPlaying) setTimeout(() => { if (isPlaying) advance(); }, 700);
+});
 
-        // Highlight active scene
-        document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('playing'));
-        cards[i].classList.add('playing');
-        cards[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+function advance() {
+  const next = currentIdx + 1;
+  if (next < scenes.length) { goTo(next); }
+  else {
+    isPlaying = false;
+    ctrlPlay.textContent = '▶';
+    audioInd.classList.remove('active');
+  }
+}
 
-        // Play the audio for this scene if available
-        const audio = cards[i].querySelector('audio');
-        let audioDone = false;
-        if (audio) {
-          audio.currentTime = 0;
-          try {
-            await audio.play();
-            // Wait for audio to finish
-            await new Promise(resolve => {
-              const onEnd = () => { audio.removeEventListener('ended', onEnd); resolve(); };
-              audio.addEventListener('ended', onEnd);
-              // Safety timeout: max 20s per scene
-              setTimeout(resolve, 20000);
-            });
-          } catch (e) {
-            // Autoplay blocked or no audio — wait fixed duration
-            audioDone = true;
-          }
-        }
+// ── Play / Pause ──────────────────────────────────────────
+ctrlPlay.addEventListener('click', () => {
+  isPlaying = !isPlaying;
+  ctrlPlay.textContent = isPlaying ? '⏸' : '▶';
+  if (isPlaying) startSceneAudio(currentIdx);
+  else stopAudio();
+});
 
-        // If no audio, show scene for 6 seconds
-        if (!audio || audioDone) {
-          await new Promise(r => setTimeout(r, 6000));
-        }
+ctrlPrev.addEventListener('click', () => {
+  isPlaying = false; ctrlPlay.textContent = '▶';
+  goTo(currentIdx - 1);
+});
+ctrlNext.addEventListener('click', () => {
+  isPlaying = false; ctrlPlay.textContent = '▶';
+  goTo(currentIdx + 1);
+});
 
-        // Brief pause between scenes
-        await new Promise(r => setTimeout(r, 800));
-      }
+// ── Scene dots ────────────────────────────────────────────
+function makeDot(i) {
+  const d = document.createElement('div');
+  d.className = 'scene-dot';
+  d.title = `Scene ${i + 1}`;
+  d.addEventListener('click', () => {
+    isPlaying = false; ctrlPlay.textContent = '▶';
+    goTo(i);
+  });
+  sceneDotsEl.appendChild(d);
+}
 
-      stopPlay();
-    }
+function updateDots(idx) {
+  document.querySelectorAll('.scene-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+    d.classList.toggle('done', i < idx);
+  });
+}
 
-    function stopPlay() {
-      isPlaying = false;
-      document.getElementById('play-btn').textContent = '▶ Play Story';
-      document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('playing'));
-      // Stop any playing audio
-      document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; });
-    }
+// ── Complete ──────────────────────────────────────────────
+function onComplete() {
+  setProgress(100);
+  statusText.textContent = '✨ Story ready!';
+  generationDone = true;
+  resetBtns();
+  shareSection.style.display = 'block';
+  ctrlPlay.disabled = false;
+  ctrlPrev.disabled = currentIdx === 0;
+  ctrlNext.disabled = currentIdx >= scenes.length - 1;
 
-    // ── Share button ───────────────────────────────────────────
-    document.getElementById('share-btn').addEventListener('click', () => {
-      if (currentStoryId) {
-        const url = `${location.origin}/story/${currentStoryId}`;
-        navigator.clipboard.writeText(url).then(() => {
-          const shareBtn = document.getElementById('share-btn');
-          shareBtn.textContent = '✓ Copied!';
-          setTimeout(() => shareBtn.textContent = '🔗 Copy Share Link', 2000);
-        });
-      }
-    });
+  // Auto-play after brief pause
+  setTimeout(() => {
+    isPlaying = true;
+    ctrlPlay.textContent = '⏸';
+    goTo(0);
+  }, 500);
 
-    document.getElementById('new-story-btn').addEventListener('click', () => {
-      resetUI();
-      input.focus();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+  videoPlayer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-    // ── Utils ──────────────────────────────────────────────────
-    function escapeHtml(str) {
-      const d = document.createElement('div');
-      d.appendChild(document.createTextNode(str));
-      return d.innerHTML;
-    }
+// ── UI helpers ────────────────────────────────────────────
+function renderIntent(d) {
+  const em = { cinematic:'🎬', dramatic:'⚡', whimsical:'🌈', educational:'📚', poetic:'🌙' };
+  intentBadge.innerHTML =
+    `<span class="badge">${em[d.tone]||'✦'} ${d.tone}</span>` +
+    `<span class="badge">👥 ${d.audience}</span>` +
+    `<span class="badge">📐 ${d.story_structure}</span>` +
+    `<span style="font-size:11px;color:var(--text-muted);margin-left:6px">${d.emotional_arc}</span>`;
+  intentBadge.style.display = 'flex';
+}
 
-    function base64ToBlob(base64, mime) {
-      const bytes = atob(base64);
-      const buf = new Uint8Array(bytes.length);
-      for (let i = 0; i < bytes.length; i++) buf[i] = bytes.charCodeAt(i);
-      return new Blob([buf], { type: mime });
-    }
+function setProgress(pct) {
+  const p = Math.min(Math.max(pct, 0), 100);
+  progressBar.style.width = p + '%';
+  progressPct.textContent = Math.round(p) + '%';
+}
 
-    // ── Auto-focus on load ─────────────────────────────────────
-    input.focus();
-  </script>
+function showError(msg) {
+  errorMsg.textContent = '⚠️ ' + msg;
+  errorMsg.style.display = 'block';
+}
+
+function resetBtns() {
+  generateBtn.disabled = false;
+  generateBtn.textContent = '✦ Generate';
+}
+
+function resetAll() {
+  stopAudio();
+  isPlaying = false; generationDone = false;
+  scenes = []; currentIdx = -1; currentStoryId = null; kbToggle = 0;
+  playerStage.querySelectorAll('img').forEach(el => el.remove());
+  placeholder.style.display = 'flex';
+  overlayTitle.textContent = ''; scenePill.textContent = 'Scene 1';
+  narrationEl.textContent = 'Building your story…';
+  sceneDotsEl.innerHTML = '';
+  sceneCounter.textContent = '— / —';
+  ctrlPlay.textContent = '▶'; ctrlPlay.disabled = true;
+  ctrlPrev.disabled = true; ctrlNext.disabled = true;
+  audioEl.onended = null; audioInd.classList.remove('active');
+  storyTitleEl.style.display = 'none'; storyTitleEl.textContent = '';
+  intentBadge.style.display = 'none'; intentBadge.innerHTML = '';
+  shareSection.style.display = 'none';
+  progressBar.style.width = '0%'; progressPct.textContent = '0%';
+  errorMsg.style.display = 'none';
+  videoPlayer.style.display = 'none';
+}
+
+// ── Share ─────────────────────────────────────────────────
+document.getElementById('share-btn').addEventListener('click', () => {
+  if (!currentStoryId) return;
+  navigator.clipboard.writeText(`${location.origin}/story/${currentStoryId}`).then(() => {
+    const b = document.getElementById('share-btn');
+    b.textContent = '✓ Copied!';
+    setTimeout(() => b.textContent = '🔗 Copy Share Link', 2000);
+  });
+});
+
+document.getElementById('new-story-btn').addEventListener('click', () => {
+  resetAll(); inputEl.focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ── Util ──────────────────────────────────────────────────
+function b64ToBlob(b64, mime) {
+  const bytes = atob(b64);
+  const buf = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) buf[i] = bytes.charCodeAt(i);
+  return new Blob([buf], { type: mime });
+}
+
+inputEl.focus();
+</script>
 </body>
 </html>
